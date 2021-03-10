@@ -49,9 +49,8 @@ class ViewController: UIViewController {
             
             // 3
             let request = VNCoreMLRequest(model: visionModel,
-                                          completionHandler: {
-                                            [weak self] request, error in
-                                            print("Request is finished!", request.results)
+                                          completionHandler: { [weak self] request, error in
+                                            self?.processObservations(for: request, error: error)
                                           })
             // 4
             request.imageCropAndScaleOption = .centerCrop
@@ -139,6 +138,30 @@ class ViewController: UIViewController {
             } catch {
                 print("Failed to perform classification: \(error)")
             }
+        }
+    }
+    
+    private func processObservations(for request: VNRequest, error: Error?) {
+        // 1
+        DispatchQueue.main.async {
+            // 2
+            if let results = request.results as? [VNClassificationObservation] {
+                // 3
+                if results.isEmpty {
+                    self.resultsLabel.text = "Nothing Found"
+                } else {
+                    self.resultsLabel.text = String(format: "%@ %.1f%%",
+                                                    results[0].identifier,
+                                                    results[0].confidence * 100)
+                }
+                // 4
+            } else if let error = error {
+                self.resultsLabel.text = "error: \(error.localizedDescription)"
+            } else {
+                self.resultsLabel.text = "???"
+            }
+            // 5
+            self.showResultsView()
         }
     }
 }
