@@ -66,7 +66,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
         resultsView.alpha = 0
-        resultsLabel.text = "choose or take a photo"
+        resultsLabel.text = "Choose or take a photo"
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -148,10 +148,12 @@ class ViewController: UIViewController {
             if let results = request.results as? [VNClassificationObservation] {
                 // 3
                 if results.isEmpty {
-                    self.resultsLabel.text = "Nothing Found"
+                    self.resultsLabel.text = "Nothing found"
+                } else if results[0].confidence < 0.8 {
+                    self.resultsLabel.text = "Not sure"
                 } else {
                     self.resultsLabel.text = String(format: "%@ %.1f%%",
-                                                    results[0].identifier,
+                                                    results[0].identifier.capitalized,
                                                     results[0].confidence * 100)
                 }
                 // 4
