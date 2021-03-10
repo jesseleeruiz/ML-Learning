@@ -96,6 +96,7 @@ class ViewController: UIViewController {
   }
 
   func classify(image: UIImage) {
+    
   }
 }
 
