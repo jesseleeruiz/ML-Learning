@@ -120,7 +120,26 @@ class ViewController: UIViewController {
     }
     
     func classify(image: UIImage) {
+        // 1
+        guard let ciImage = CIImage(image: image) else {
+            print("Unable to create CIImage")
+            return
+        }
         
+        // 2
+        let orientation = CGImagePropertyOrientation(image.imageOrientation)
+        
+        // 3
+        DispatchQueue.global(qos: .userInitiated).async {
+            // 4
+            let handler = VNImageRequestHandler(ciImage: ciImage,
+                                                orientation: orientation)
+            do {
+                try handler.perform([self.classificationRequest])
+            } catch {
+                print("Failed to perform classification: \(error)")
+            }
+        }
     }
 }
 
